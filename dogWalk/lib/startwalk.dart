@@ -19,7 +19,7 @@ class StartWalk extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.orange,
       ),
-      home:WalkView(dstorage: DognameStorage(), cstorage: CounterStorage(),pstorage: PicStorage(), wstorage: WeightsStorage() ),
+      home:WalkView(dstorage: DognameStorage(), cstorage: CounterStorage(),pstorage: PicStorage(), wstorage: WeightsStorage(),),
     );
   }
 }
@@ -40,7 +40,7 @@ class _WalkViewState extends State<WalkView> {
 
   final nameTextController = TextEditingController();
   String dogWeight = "";
-  String allWeight;
+  String _allWeight;
   String _name;
   File file;
 
@@ -51,7 +51,17 @@ class _WalkViewState extends State<WalkView> {
        setState((){
           _name = x;
        });
-       });
+    });
+    widget.wstorage.readWeights().then((String x){
+      setState((){
+        _allWeight = x;
+      });
+    });
+    widget.pstorage.readPic().then((File i){
+      setState((){
+        file = i;
+        });
+   });
   }
 
 
@@ -138,7 +148,7 @@ class _WalkViewState extends State<WalkView> {
                         children: <Widget>[
                           SizedBox(height: 10),
                           Text(
-                            'こんにちは, $_name さん',
+                            'こんにちは$_name さん',
                             style: TextStyle(fontSize: 25.0),
                           ),
 
@@ -160,26 +170,16 @@ class _WalkViewState extends State<WalkView> {
                           RaisedButton(
                             onPressed: (dogWeight != '')
                                 ? () async {
-                                    widget.pstorage.readPic().then((File i){
-                                      setState((){
-                                        file = i;
-                                      });
-                                    }
-                                    );
-                                    widget.wstorage.readWeights().then((String i){
-                                      setState((){
-                                        allWeight = i + "," + dogWeight;
-                                      });
-                                    }
-                                    );
-                                    widget.wstorage.writeWeights(allWeight);
-                                    widget.wstorage.readWeights().then((String i){
-                                      print(i);
-                                    });
+                                    print(_allWeight);
+
+                                    widget.wstorage.writeWeights("$_allWeight,$dogWeight");
+
                                     Navigator.push(
                                           context,
                                           MaterialPageRoute(builder: (context) => MyMap(),)
                                           );
+
+                                          
                                   }
                                 : null,
                             color: Colors.red,

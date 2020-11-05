@@ -217,7 +217,7 @@ class _LoginState extends State<LoginView> {
                           RaisedButton(
                             onPressed: (dogName != '' &&
                                     dogWeight != '' && _image != null)
-                                ? ()  {
+                                ? ()  async {
                                     widget.cstorage.writeCounter(1);
                                     widget.dstorage.writeName(dogName);
                                     widget.pstorage.writePic(_image);

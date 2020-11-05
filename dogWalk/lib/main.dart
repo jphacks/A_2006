@@ -60,7 +60,7 @@ class _HomeState extends State<HomeView> {
         primarySwatch: Colors.orange,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: LoginView(dstorage: DognameStorage(), cstorage: CounterStorage(),pstorage: PicStorage(), wstorage: WeightsStorage() ),
+      home: LoginView(dstorage: DognameStorage(), cstorage: CounterStorage(),pstorage: PicStorage(), wstorage: WeightsStorage(),),
     );
 
     } else {
@@ -70,13 +70,18 @@ class _HomeState extends State<HomeView> {
       theme: ThemeData(
         primarySwatch: Colors.orange,
       ),
-      home:LoginView(dstorage: DognameStorage(), cstorage: CounterStorage(),pstorage: PicStorage(), wstorage: WeightsStorage() ), 
+      home:LoginView(dstorage: DognameStorage(), cstorage: CounterStorage(),pstorage: PicStorage(), wstorage: WeightsStorage(),), 
       // MapView(),
     );
     
     }
   }
 }
+
+
+
+
+
 
 
 
@@ -180,6 +185,7 @@ class PicStorage {
   }
 }
 
+
 class WeightsStorage {
   Future<String> get _localPath async {//fileへのpath取得
     final directory = await getApplicationDocumentsDirectory();
@@ -189,7 +195,7 @@ class WeightsStorage {
 
   Future<File> get _localFile async {//ファイルの内容を返す
     final path = await _localPath;
-    return File('$path/weights.txt');
+    return File('$path/weightstore.txt');
   }
 
   Future<String> readWeights() async {//fileを読めたかどうか
@@ -206,11 +212,11 @@ class WeightsStorage {
     }
   }
 
-  Future<File> writeWeights(String weight) async {//fileへの書き込み
+  Future<File> writeWeights(String name) async {//fileへの書き込み
     final file = await _localFile;
-
+    print("書き込む内容 $name");
     // Write the file
-    return file.writeAsString('$weight');
+    return file.writeAsString('$name');
   }
 }
 
