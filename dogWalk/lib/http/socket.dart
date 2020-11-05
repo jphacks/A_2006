@@ -31,10 +31,10 @@ class Response {
   }
 }
 
-//POSTして結果を受け取る関数
-Future<Response> fetchResponse() async {
+//POSTして結果(km)を受け取る関数
+Future<Response> fetchResponse(weight, image) async {
   var url ="localhost";
-  var request = new Request(weight: 33.3);
+  var request = new Request(weight: weight,image: image );
   final response = await http.post(url,
         body: json.encode(request.toJson()),
         headers: {"Content-Type":"application/json"});
