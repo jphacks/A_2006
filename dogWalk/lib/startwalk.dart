@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:wasm';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -10,6 +10,9 @@ import 'dart:async';
 
 import './map.dart';
 import './main.dart';
+import './http/socket.dart';
+import 'dart:io';
+
 
 class StartWalk extends StatelessWidget {
   @override
@@ -42,7 +45,8 @@ class _WalkViewState extends State<WalkView> {
   String dogWeight = "";
   String _allWeight;
   String _name;
-  File file;
+  File _file;
+  double distance;
 
   @override
   void initState() {
@@ -59,7 +63,7 @@ class _WalkViewState extends State<WalkView> {
     });
     widget.pstorage.readPic().then((File i){
       setState((){
-        file = i;
+        _file = i;
         });
    });
   }
@@ -173,13 +177,15 @@ class _WalkViewState extends State<WalkView> {
                                     print(_allWeight);
 
                                     widget.wstorage.writeWeights("$_allWeight,$dogWeight");
-
+                                    fetchResponse(dogWeight, _file).then((double d){
+                                      setState((){
+                                        distance = d;
+                                      });
+                                    });
                                     Navigator.push(
-                                          context,
-                                          MaterialPageRoute(builder: (context) => MyMap(),)
-                                          );
-
-                                          
+                                           context,
+                                           MaterialPageRoute(builder: (context) => MyMap(),)
+                                       );
                                   }
                                 : null,
                             color: Colors.red,

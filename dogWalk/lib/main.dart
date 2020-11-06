@@ -214,7 +214,6 @@ class WeightsStorage {
 
   Future<File> writeWeights(String name) async {//fileへの書き込み
     final file = await _localFile;
-    print("書き込む内容 $name");
     // Write the file
     return file.writeAsString('$name');
   }

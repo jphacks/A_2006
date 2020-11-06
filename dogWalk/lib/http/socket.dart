@@ -1,46 +1,20 @@
-import 'dart:html';
+import 'dart:wasm';
+
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
-//Request用のデータクラス
-class Request {
-  final double weight;
-  final File image;
-
-  Request({
-    this.weight,
-    this.image,
-  });
-  Map<String, dynamic> toJson() => {
-    'weight': weight,
-    'image': image
-  };
-}
-
-//Responseを受け取るデータクラス
-class Response {
-  final double distance;
-
-  Response({
-    this.distance,
-  });
-  factory Response.fromJson(Map<String, dynamic> json) {
-    return Response(
-      distance: json['distance'],
-    );
-  }
-}
+import 'dart:io';
 
 //POSTして結果(km)を受け取る関数
-Future<Response> fetchResponse(weight, image) async {
-  var url ="localhost";
-  var request = new Request(weight: weight,image: image );
+Future<double> fetchResponse(String weight, File image) async {
+  var url ="https://jphacksdog.herokuapp.com/route";
   final response = await http.post(url,
-        body: json.encode(request.toJson()),
+        body: json.encode({"weight": weight,"image": base64Encode(await image.readAsBytes()) }),
         headers: {"Content-Type":"application/json"});
   if (response.statusCode == 200) {
-    return Response.fromJson(json.decode(response.body));
+    print("成功");
+    return json.decode(response.body)["data"]["distance"];
   }else {
+    print("失敗");
     throw Exception("Failed");
   }
 }
