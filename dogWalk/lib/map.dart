@@ -7,6 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:math' show cos, sqrt, asin;
 import './main.dart';
 import './startwalk.dart';
+import './selectpoint.dart';
 
 
 class MyMap extends StatelessWidget {
@@ -17,20 +18,27 @@ class MyMap extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.orange,
       ),
-      home: MapView(),
+      home: MapView(d: 0.0),
     );
   }
 }
 
 class MapView extends StatefulWidget {
+  final double d;
+
+  MapView({Key key, @required this.d}) : super(key: key);
   @override
   _MapViewState createState() => _MapViewState();
 }
 
 class _MapViewState extends State<MapView> {
 
+  //widget.dで参照できる
+  double distance;
   final startAddressController = TextEditingController();
   final destinationAddressController = TextEditingController();
+
+  double tlat, tlng;
   
   CameraPosition _initialLocation = CameraPosition(target: LatLng(0.0, 0.0));
   GoogleMapController mapController;
@@ -40,9 +48,13 @@ class _MapViewState extends State<MapView> {
   Position _currentPosition;
   String _currentAddress;
 
+  int ispoly = 0;
+  int showdis = 0;
+
   String _startAddress = '';
   String _destinationAddress = '';
   String _placeDistance;
+
 
   Set<Marker> markers = {};
 
@@ -97,22 +109,11 @@ class _MapViewState extends State<MapView> {
   // Method for calculating the distance between two places
   Future<bool> _calculateDistance() async {
     try {
-      // Retrieving placemarks from addresses
-      List<Placemark> startPlacemark =
-          await _geolocator.placemarkFromAddress(_startAddress);
-      List<Placemark> destinationPlacemark =
-          await _geolocator.placemarkFromAddress(_destinationAddress);
-
-      if (startPlacemark != null && destinationPlacemark != null) {
         // Use the retrieved coordinates of the current position,
         // instead of the address if the start position is user's
         // current position, as it results in better accuracy.
-        Position startCoordinates = _startAddress == _currentAddress
-            ? Position(
-                latitude: _currentPosition.latitude,
-                longitude: _currentPosition.longitude)
-            : startPlacemark[0].position;
-        Position destinationCoordinates = destinationPlacemark[0].position;
+        Position startCoordinates = _currentPosition;
+        Position destinationCoordinates = Position(latitude: tlat, longitude:tlng);
 
         // Start Location Marker
         Marker startMarker = Marker(
@@ -123,7 +124,6 @@ class _MapViewState extends State<MapView> {
           ),
           infoWindow: InfoWindow(
             title: 'Start',
-            snippet: _startAddress,
           ),
           icon: BitmapDescriptor.defaultMarker,
         );
@@ -137,7 +137,6 @@ class _MapViewState extends State<MapView> {
           ),
           infoWindow: InfoWindow(
             title: 'Destination',
-            snippet: _destinationAddress,
           ),
           icon: BitmapDescriptor.defaultMarker,
         );
@@ -149,36 +148,6 @@ class _MapViewState extends State<MapView> {
         print('START COORDINATES: $startCoordinates');
         print('DESTINATION COORDINATES: $destinationCoordinates');
 
-        Position _northeastCoordinates;
-        Position _southwestCoordinates;
-
-        // Calculating to check that
-        // southwest coordinate <= northeast coordinate
-        if (startCoordinates.latitude <= destinationCoordinates.latitude) {
-          _southwestCoordinates = startCoordinates;
-          _northeastCoordinates = destinationCoordinates;
-        } else {
-          _southwestCoordinates = destinationCoordinates;
-          _northeastCoordinates = startCoordinates;
-        }
-
-        // Accommodate the two locations within the
-        // camera view of the map
-        mapController.animateCamera(
-          CameraUpdate.newLatLngBounds(
-            LatLngBounds(
-              northeast: LatLng(
-                _northeastCoordinates.latitude,
-                _northeastCoordinates.longitude,
-              ),
-              southwest: LatLng(
-                _southwestCoordinates.latitude,
-                _southwestCoordinates.longitude,
-              ),
-            ),
-            100.0,
-          ),
-        );
 
         // Calculating the distance between the start and the end positions
         // with a straight path, without considering any route
@@ -210,7 +179,7 @@ class _MapViewState extends State<MapView> {
         });
 
         return true;
-      }
+      
     } catch (e) {
       print(e);
     }
@@ -247,9 +216,9 @@ class _MapViewState extends State<MapView> {
     PolylineId id = PolylineId('poly');
     Polyline polyline = Polyline(
       polylineId: id,
-      color: Colors.red,
+      color: Colors.orange,
       points: polylineCoordinates,
-      width: 3,
+      width: 5,
     );
     polylines[id] = polyline;
   }
@@ -257,7 +226,31 @@ class _MapViewState extends State<MapView> {
   @override
   void initState() {
     super.initState();
-    _getCurrentLocation();
+    setState((){
+      showdis = 0;
+      ispoly = 0;
+      distance = widget.d;
+    });
+    Future(() async {
+      await _getCurrentLocation();
+
+      if (distance != 0.0){
+      
+      List ll = selectState(distance, _currentPosition.latitude, _currentPosition.longitude);
+      setState((){
+        showdis = 1;
+        ispoly = 1;
+        tlat = ll[0];
+        tlng = ll[1];
+      });
+      print("ここまで行ったpart2");
+
+      Future(() async {
+      await _calculateDistance();
+    });
+
+    }
+    });
   }
 
   @override
@@ -383,7 +376,7 @@ class _MapViewState extends State<MapView> {
               child: Align(
                 alignment: Alignment.bottomCenter,
                 child: Padding(
-                  padding: const EdgeInsets.only(bottom: 13.0),
+                  padding: const EdgeInsets.only(bottom: 20.0),
                   child: RaisedButton(
                             onPressed: ()  {
                               Navigator.push(
@@ -391,25 +384,90 @@ class _MapViewState extends State<MapView> {
                                            MaterialPageRoute(builder: (context) => StartWalk(),)
                                        );
                                   },
-                            color: Colors.red,
+                            color: Colors.orange,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20.0),
                             ),
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Text(
+                              child: ispoly != 1 ? Text(
                                 'GO!!'.toUpperCase(),
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 26.0,
-                                ),
+                                )) : Text(
+                                'ルートを再検索'.toUpperCase(),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 26.0,
+                                )
+                              
                               ),
                             ),
                           ),
                 ),
               ),
             ),
-            
+
+            SafeArea(
+              child: showdis != 0 ? Align(
+                alignment: Alignment.topCenter,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white70,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(20.0),
+                      ),
+                    ),
+                    width: width * 0.9,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Text(
+                            '散歩開始！',
+                            style: TextStyle(fontSize: 20.0),
+                          ),
+                          SizedBox(height: 10),
+                          Visibility(
+                            visible: _placeDistance == null ? false : true,
+                            child: Text(
+                              '片道: $_placeDistance km',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 5),
+                          RaisedButton(
+                            onPressed: () async {
+                                    setState(() {
+                                      showdis = 0;
+                                    });},
+
+                            color: Colors.white,
+                            shape: const CircleBorder(
+                              side: BorderSide(
+                                color: Colors.black,
+                                width: 1,
+                                style: BorderStyle.solid,
+                              ),),
+                            child: Icon(Icons.clear_outlined),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ): Text(""),
+            ),
+
+
+
 
 
 

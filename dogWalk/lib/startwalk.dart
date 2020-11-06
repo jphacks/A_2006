@@ -152,7 +152,7 @@ class _WalkViewState extends State<WalkView> {
                         children: <Widget>[
                           SizedBox(height: 10),
                           Text(
-                            'こんにちは$_name さん',
+                            'こんにちは $_name さん',
                             style: TextStyle(fontSize: 25.0),
                           ),
 
@@ -179,16 +179,16 @@ class _WalkViewState extends State<WalkView> {
                                     widget.wstorage.writeWeights("$_allWeight,$dogWeight");
                                     fetchResponse(dogWeight, _file).then((double d){
                                       setState((){
-                                        distance = d;
+                                        distance = d/2.3;
                                       });
                                     });
                                     Navigator.push(
                                            context,
-                                           MaterialPageRoute(builder: (context) => MyMap(),)
+                                           MaterialPageRoute(builder: (context) => MapView(d: distance),)
                                        );
                                   }
                                 : null,
-                            color: Colors.red,
+                            color: Colors.orange,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20.0),
                             ),
@@ -210,6 +210,24 @@ class _WalkViewState extends State<WalkView> {
                   ),
                 ),
               ),
+              RaisedButton(
+                            onPressed: ()  {
+                              Navigator.push(
+                                           context,
+                                           MaterialPageRoute(builder: (context) => MapView(d:0.0))
+                                       );
+                                  }
+                                    ,
+
+                            color: Colors.white,
+                            shape: const CircleBorder(
+                              side: BorderSide(
+                                color: Colors.black,
+                                width: 1,
+                                style: BorderStyle.solid,
+                              ),),
+                            child: Icon(Icons.clear_outlined),
+                          ),
                 ]
               )
             ),
