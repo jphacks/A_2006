@@ -38,7 +38,7 @@ def calc_rep(weight): #安静時エネルギー
     return rep
 
 def calc_der(rep, state): #一日あたりの理想エネルギー
-    der = rep*coefficient_dic[state]
+    der = rep*state
     return der
 
 
@@ -82,6 +82,7 @@ def main():
     #《追加》=======================================================================
     # 画像をazureにぶん投げて結果を取得
     img = request.files['image_file'] 
+    weight = request.files["weight"].filename
     azure_results = azure_request(img) 
     # ['normal: 65.00%', 'slender: 56.72%', 'fat: 9.45%']こんな感じで帰ってくる
     print("[DEBUG] azure_results: ", azure_results)
@@ -89,20 +90,16 @@ def main():
     # fat指数（適当）
     fat = azure_results["slender"]*(-1) + azure_results["fat"]*1 + 1
     #=======================================================================
+    print("[DEBUG] fat指数: ", fat)
     
     #TODO:POSTされた画像データを扱う
     #img = img_parser(json_data.get("img"))
 
-    # rep = calc_rep(weight)
-    # der = calc_der(rep, coefficient)
-    # dst = ideal_walk_dst(der, weight)
+    rep = calc_rep(float(weight))
+    der = calc_der(rep, fat)
+    dst = ideal_walk_dst(der, float(weight))
 
 
-    dst = 100 #（仮）
-    #《追加》=======================================================================
-    # 距離にfat指数をかける
-    dst *=  fat
-    #=======================================================================
 
     print("[DEBUG] distance: "+str(dst))
 
