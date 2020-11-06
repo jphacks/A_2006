@@ -4,6 +4,8 @@ from msrest.authentication import ApiKeyCredentials
 from werkzeug.utils import secure_filename
 from PIL import Image
 import json
+import io
+import base64
 
 # サニタイズ卍
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg','gif'])
@@ -39,14 +41,14 @@ def calc_rep(weight): #安静時エネルギー
 
 def calc_der(rep, state): #一日あたりの理想エネルギー
     der = rep*state
-    return der
+    return der*0.3
 
 
 def azure_request(img_by):
     project_ID = "xxx"
     iteration_name = "xxx"
-    key = "xxxx"
-    endpointurl = "xxxx"
+    key = "xxx"
+    endpointurl = "xxx"
 
     prediction_credentials = ApiKeyCredentials(
         in_headers={"Prediction-key": key}
@@ -78,17 +80,18 @@ def main():
     # print(json_data)
     # weight = float(json_data.get("weight"))
     # coefficient = json_data.get("coefficient")
+    weight = request.get_json()["weight"]
+    img = request.get_json()['image'] 
 
     #《追加》=======================================================================
     # 画像をazureにぶん投げて結果を取得
-    img = request.files['image_file'] 
-    weight = request.files["weight"].filename
+    img = base64.b64decode(img)
     azure_results = azure_request(img) 
     # ['normal: 65.00%', 'slender: 56.72%', 'fat: 9.45%']こんな感じで帰ってくる
     print("[DEBUG] azure_results: ", azure_results)
 
     # fat指数（適当）
-    fat = azure_results["slender"]*(-1) + azure_results["fat"]*1 + 1
+    fat = azure_results["slender"]*(-1) + azure_results["fat"]*1 + 2
     #=======================================================================
     print("[DEBUG] fat指数: ", fat)
     
@@ -106,7 +109,7 @@ def main():
     payload = {
         "result":True,
         "data":{
-            "distance": dst,
+            "distance": dst/2,
         }
     }
     

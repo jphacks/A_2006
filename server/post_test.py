@@ -1,8 +1,7 @@
 import requests
 import json
 
-post_url = "http://localhost:5678/route"
-
+post_url = "https://jphacksdog.herokuapp.com/route"
 #postしたいデータ
 
 
