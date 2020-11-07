@@ -1,8 +1,10 @@
 # DOLK
 
-[![IMAGE ALT TEXT HERE](icon.png)]("https://www.youtube.com/watch?v=6bpACxidJlI&feature=youtu.be")
+[![IMAGE ALT TEXT HERE](icon.png)]()
 
 ## 製品概要
+###リンク
+[youtube](https://www.youtube.com/watch?v=6bpACxidJlI&feature=youtu.be)
 ### 背景(製品開発のきっかけ、課題等）
 **「メタボ」**   
 誰しも一度は聞いたことがあるほど認知されている社会問題だと思います。  
