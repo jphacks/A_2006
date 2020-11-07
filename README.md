@@ -3,7 +3,7 @@
 [![IMAGE ALT TEXT HERE](icon.png)]()
 
 ## 製品概要
-###リンク
+### リンク
 [youtube](https://www.youtube.com/watch?v=6bpACxidJlI&feature=youtu.be)
 ### 背景(製品開発のきっかけ、課題等）
 **「メタボ」**   
