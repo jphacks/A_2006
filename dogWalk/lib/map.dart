@@ -18,15 +18,17 @@ class MyMap extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.orange,
       ),
-      home: MapView(d: 0.0),
+      home: MapView(d: 0.0,f:0.0, cc:0.0),
     );
   }
 }
 
 class MapView extends StatefulWidget {
   final double d;
+  final double f;
+  final double cc;
 
-  MapView({Key key, @required this.d}) : super(key: key);
+  MapView({Key key, @required this.d, @required this.f, @required this.cc}) : super(key: key);
   @override
   _MapViewState createState() => _MapViewState();
 }
@@ -35,6 +37,9 @@ class _MapViewState extends State<MapView> {
 
   //widget.dで参照できる
   double distance;
+  double dryfood;
+  double cal;
+  int gramfood;
   final startAddressController = TextEditingController();
   final destinationAddressController = TextEditingController();
 
@@ -230,6 +235,8 @@ class _MapViewState extends State<MapView> {
       showdis = 0;
       ispoly = 0;
       distance = widget.d;
+      dryfood = widget.f;
+      cal = widget.cc;
     });
     Future(() async {
       await _getCurrentLocation();
@@ -242,8 +249,12 @@ class _MapViewState extends State<MapView> {
         ispoly = 1;
         tlat = ll[0];
         tlng = ll[1];
+        if (dryfood != 0.0){
+        print("dryfoodの値は $dryfood");
+        print("calの値は　${widget.cc}");
+        gramfood = (cal/dryfood*100.0).round();
+      }
       });
-      print("ここまで行ったpart2");
 
       Future(() async {
       await _calculateDistance();
@@ -447,6 +458,66 @@ class _MapViewState extends State<MapView> {
                             onPressed: () async {
                                     setState(() {
                                       showdis = 0;
+                                    });},
+
+                            color: Colors.white,
+                            shape: const CircleBorder(
+                              side: BorderSide(
+                                color: Colors.black,
+                                width: 1,
+                                style: BorderStyle.solid,
+                              ),),
+                            child: Icon(Icons.clear_outlined),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ): Text(""),
+            ),
+
+             //目標摂取量の表示
+            SafeArea(
+              child: (cal != 0.0 && dryfood != 0.0) ? Align(
+                alignment: Alignment.center,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 50.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white70,
+                      border: Border.all(color: Colors.red),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(20.0),
+                      ),
+                    ),
+                    width: width * 0.8,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Text(
+                            '今日の摂取目標カロリーは',
+                            style: TextStyle(fontSize: 20.0),
+                          ),
+                          SizedBox(height: 10),
+                          Visibility(
+                            visible: true,
+                            child: Text(
+                              '$gramfood gです',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 5),
+                          RaisedButton(
+                            onPressed: () async {
+                                    setState(() {
+                                      dryfood = 0.0;
+                                      cal = 0.0;
                                     });},
 
                             color: Colors.white,

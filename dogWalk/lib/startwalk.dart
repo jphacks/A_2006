@@ -14,6 +14,7 @@ import './http/socket.dart';
 import 'dart:io';
 
 
+
 class StartWalk extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -42,11 +43,14 @@ class WalkView extends StatefulWidget {
 class _WalkViewState extends State<WalkView> {
 
   final nameTextController = TextEditingController();
+  final calTextController = TextEditingController();
   String dogWeight = "";
   String _allWeight;
   String _name;
   File _file;
   double distance;
+  String dryfood;
+  double cal = 0.0;
 
   @override
   void initState() {
@@ -157,9 +161,11 @@ class _WalkViewState extends State<WalkView> {
                           ),
 
                           SizedBox(height: 10),
+                          Image.asset('images/dog.gif', height: 90,width: width*0.8,),
+                          SizedBox(height: 10),
 
                           _textField(
-                              label: '現在の体重',
+                              label: '現在の体重(kg)',
                               hint: '50',
                               prefixIcon: Icon(Icons.looks_one_outlined),
                               controller: nameTextController,
@@ -170,22 +176,37 @@ class _WalkViewState extends State<WalkView> {
                                 });
                               }),
                           SizedBox(height: 10),
+                            _textField(
+                              label: 'ドライフードのカロリー(kcal/100g)',
+                              hint: '50',
+                              prefixIcon: Icon(Icons.looks_two_outlined),
+                              controller: calTextController,
+                              width: width,
+                              locationCallback: (String value) {
+                                setState(() {
+                                  dryfood = value;
+                                });
+                              }),
+                          SizedBox(height: 10),
 
                           RaisedButton(
-                            onPressed: (dogWeight != '')
+                            onPressed: (dogWeight != '' && dryfood != '')
                                 ? () async {
                                     print(_allWeight);
 
                                     widget.wstorage.writeWeights("$_allWeight,$dogWeight");
-                                    fetchResponse(dogWeight, _file).then((double d){
+                                    fetchResponse(dogWeight, _file).then((List l){
                                       setState((){
-                                        distance = d/2.3;
+                                        distance = l[0]/2.3;
+                                        cal = l[1];
+                                    
                                       });
-                                    });
-                                    Navigator.push(
+                                       Navigator.push(
                                            context,
-                                           MaterialPageRoute(builder: (context) => MapView(d: distance),)
+                                           MaterialPageRoute(builder: (context) => MapView(d: distance, f: double.parse(dryfood),cc: cal),)
                                        );
+                                    });
+
                                   }
                                 : null,
                             color: Colors.orange,
@@ -214,7 +235,7 @@ class _WalkViewState extends State<WalkView> {
                             onPressed: ()  {
                               Navigator.push(
                                            context,
-                                           MaterialPageRoute(builder: (context) => MapView(d:0.0))
+                                           MaterialPageRoute(builder: (context) => MapView(d:0.0, f:0.0, cc:0.0))
                                        );
                                   }
                                     ,

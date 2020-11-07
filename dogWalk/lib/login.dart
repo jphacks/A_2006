@@ -115,7 +115,7 @@ class _LoginState extends State<LoginView> {
     return Scaffold(
       resizeToAvoidBottomPadding:false,
        appBar: AppBar(
-        title: Text('dogWalk',style: TextStyle(
+        title: Text('Welcome To Dolk',style: TextStyle(
                                                       fontSize: 30,
                                                       color: Colors.black87
                                                       ),),
@@ -146,7 +146,7 @@ class _LoginState extends State<LoginView> {
                             '初期情報を入力',
                             style: TextStyle(fontSize: 25.0),
                           ),
-                          Image.asset('images/walk.gif', height: 90.0,width: 90.0,),
+                          Image.asset('images/dog.gif', height: 90,width: width*0.8,),
 
                           SizedBox(height: 10),
 

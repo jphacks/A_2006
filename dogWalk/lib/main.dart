@@ -70,7 +70,7 @@ class _HomeState extends State<HomeView> {
       theme: ThemeData(
         primarySwatch: Colors.orange,
       ),
-      home:MapView(d:0.0),
+      home:MapView(d:0.0, f:0.0, cc:0.0),
     );
     
     }
