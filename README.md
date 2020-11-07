@@ -1,6 +1,6 @@
 # DOLK
 
-[![IMAGE ALT TEXT HERE](icon.png)]()
+[![IMAGE ALT TEXT HERE](icon.png)]("https://www.youtube.com/watch?v=6bpACxidJlI&feature=youtu.be")
 
 ## 製品概要
 ### 背景(製品開発のきっかけ、課題等）
