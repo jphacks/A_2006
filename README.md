@@ -47,6 +47,7 @@
 * [heroku](https://jp.heroku.com/)
 #### デバイス
 * iOS
+* Android OS
 
 #### ハッカソンで開発した独自機能・技術
 * 犬の太り具合を算出する機能の作成
