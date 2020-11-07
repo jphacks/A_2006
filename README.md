@@ -1,8 +1,10 @@
 # DOLK
 
-[![IMAGE ALT TEXT HERE](https://jphacks.com/wp-content/uploads/2020/09/JPHACKS2020_ogp.jpg)](https://www.youtube.com/watch?v=G5rULR53uMk)
+[![IMAGE ALT TEXT HERE](icon.png)]()
 
 ## 製品概要
+### リンク
+[youtube](https://www.youtube.com/watch?v=6bpACxidJlI&feature=youtu.be)
 ### 背景(製品開発のきっかけ、課題等）
 **「メタボ」**   
 誰しも一度は聞いたことがあるほど認知されている社会問題だと思います。  
@@ -27,8 +29,8 @@
 犬ちゃんの健康を簡単に把握、適切な犬ちゃんケアを実現できます！！
 
 ### 今後の展望
-- 犬ちゃんだけでなく、猫ちゃんやワニちゃんなどあらゆるペットに対応。
-→ 動物園などにシステムとして導入
+- 犬ちゃんだけでなく、猫ちゃんやワニちゃんなどあらゆるペットに対応。  
+→ 動物園などにシステムとして導入  
 - 犬種などによるさらに適切な指導の実現
 
 ### 注力したこと（こだわり等）
@@ -47,6 +49,7 @@
 * [heroku](https://jp.heroku.com/)
 #### デバイス
 * iOS
+* Android OS
 
 #### ハッカソンで開発した独自機能・技術
 * 犬の太り具合を算出する機能の作成
