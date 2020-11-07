@@ -202,7 +202,7 @@ class _LoginState extends State<LoginView> {
                           SizedBox(height: 10),
 
                           _textField(
-                              label: '犬の体重',
+                              label: '犬の年齢',
                               hint: '100',
                               prefixIcon: Icon(Icons.looks_two_outlined),
                               controller: weightTextController,
